@@ -1,4 +1,15 @@
 import math
+import unittest
+from import_lines import import_data_to_array
+
+
+def process_puzzle_data(input_file):
+    lines = import_data_to_array(input_file)
+    entry_map = TreeMap()
+    for line in lines:
+        entry_map.add_row(line)
+    return entry_map
+
 
 class Row:
 
@@ -12,7 +23,8 @@ class Row:
             curr_col = curr_col - self._num_columns
         return self._data[curr_col]
 
-class Tree_Map:
+
+class TreeMap:
 
     def __init__(self):
         self._rows = []
@@ -28,16 +40,6 @@ class Tree_Map:
         return self._rows[row].get_position(column)
 
 
-entry_map = Tree_Map()
-try:
-    with open('input_puzzle_3', 'r') as input_file:
-        line = input_file.readline()
-        while line:
-            entry_map.add_row(line.strip('\n'))
-            line = input_file.readline()
-except Exception as exc:
-    print(f"There was an exception: {exc}")
-
 def count_trees(entry_map, slope_rows, slope_columns, start_row, start_column):
     count = 0
     current_row = start_row
@@ -52,11 +54,44 @@ def count_trees(entry_map, slope_rows, slope_columns, start_row, start_column):
         print(exc)
     return count
 
-result = []
-result.append(count_trees(entry_map, 1, 3, 0, 0))
-result.append(count_trees(entry_map, 1, 1, 0, 0))
-result.append(count_trees(entry_map, 1, 5, 0, 0))
-result.append(count_trees(entry_map, 1, 7, 0, 0))
-result.append(count_trees(entry_map, 2, 1, 0, 0))
 
-print(f"Results {result}. Multiplication {math.prod(result)}")
+def solve_puzzle_part_1():
+    entry_map = process_puzzle_data('input_puzzle_3')
+    result = count_trees(entry_map, 1, 3, 0, 0)
+    print(f"Result {result}.")
+
+
+def solve_puzzle_part_2():
+    entry_map = process_puzzle_data('input_puzzle_3')
+    result = []
+    result.append(count_trees(entry_map, 1, 3, 0, 0))
+    result.append(count_trees(entry_map, 1, 1, 0, 0))
+    result.append(count_trees(entry_map, 1, 5, 0, 0))
+    result.append(count_trees(entry_map, 1, 7, 0, 0))
+    result.append(count_trees(entry_map, 2, 1, 0, 0))
+    print(f"Results {result}. Multiplication {math.prod(result)}")
+
+
+if __name__ == "__main__":
+    solve_puzzle_part_2()
+
+
+"""  TESTING  """
+
+
+class TestPuzzle3(unittest.TestCase):
+
+    def test_example_part_1(self):
+        entry_map = process_puzzle_data('test_input_puzzle_3')
+        result = count_trees(entry_map, 1, 3, 0, 0)
+        self.assertEqual(7, result)
+
+    def test_example_part_2(self):
+        entry_map = process_puzzle_data('test_input_puzzle_3')
+        result = []
+        result.append(count_trees(entry_map, 1, 3, 0, 0))
+        result.append(count_trees(entry_map, 1, 1, 0, 0))
+        result.append(count_trees(entry_map, 1, 5, 0, 0))
+        result.append(count_trees(entry_map, 1, 7, 0, 0))
+        result.append(count_trees(entry_map, 2, 1, 0, 0))
+        self.assertEqual(336, math.prod(result))
